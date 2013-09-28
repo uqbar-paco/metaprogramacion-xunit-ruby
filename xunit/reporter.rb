@@ -1,7 +1,7 @@
 require_relative './resultado'
 
 class Reporter
-  attr_accessor :tests, :results
+  attr_accessor :results
 
   def initialize
     self.reset
@@ -9,11 +9,14 @@ class Reporter
 
   def reset
     @results = []
-    @tests=0
   end
 
   def success(test)
     @results << PassedResult.new(test)
+  end
+
+  def tests_ran
+    @results.length
   end
 
   def failure(test, message)
@@ -24,10 +27,6 @@ class Reporter
     @results << ErrorResult.new(test)
   end
 
-  def test
-    @tests+=1
-  end
-
   def benchmark_and_fire_test(instance, method=nil)
     beginning_time = Time.now
     if block_given?
@@ -36,7 +35,7 @@ class Reporter
       instance.send method
     end
     end_time = Time.now
-    puts "#{@tests} tests, #{@results.length} assertions,#{self.get_success.length} tests run ok, #{self.get_failures.length} failures,#{self.get_errors.length} errors."
+    puts "#{@results.length} tests,#{self.get_success.length} tests ran ok, #{self.get_failures.length} failures,#{self.get_errors.length} errors."
     puts "Finished tests in #{(end_time - beginning_time)*1000} milliseconds"
     self.reset
   end

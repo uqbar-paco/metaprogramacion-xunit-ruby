@@ -61,7 +61,7 @@ describe 'Testeando xunit' do
     tester=XUnitFixture.new
     tester.add_class(SomeFailTest)
     tester.run_all_tests
-    expect(0).to eq(tester.fixture_reporter.tests)
+    expect(0).to eq(tester.fixture_reporter.tests_ran)
   end
 
 end

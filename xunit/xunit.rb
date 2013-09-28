@@ -38,7 +38,6 @@ class XUnitFixture
   def run(instance, test)
     begin
       instance.before()
-      @fixture_reporter.test
       instance.send test
       @fixture_reporter.success test
     rescue AssertionError => exception
