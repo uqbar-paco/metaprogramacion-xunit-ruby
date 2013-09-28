@@ -1,3 +1,4 @@
+#cambiar la clase Reporter para que tenga una coleccion de resultados y no varios arrays de tests
 class Reporter
   attr_accessor :assertions,:errors,:failures,:tests
 
@@ -6,9 +7,9 @@ class Reporter
   end
 
   def reset
-    self.assertions=Array.new()
-    self.failures = Hash.new()
-    self.errors=Array.new()
+    self.assertions=[]
+    self.failures = {}
+    self.errors=[]
     self.tests=0
   end
 

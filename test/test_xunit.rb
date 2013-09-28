@@ -78,8 +78,8 @@ class TestXUnit < Test::Unit::TestCase
   end
 
   def test_error
-    @my_test_case.run(:test_generate_error)
-    self.assert_equal(1,@my_test_case.reporter.errors.length)
+      @my_test_case.run(:test_generate_error)
+      self.assert_equal(1,@my_test_case.reporter.errors.length)
   end
 
 

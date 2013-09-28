@@ -46,7 +46,8 @@ class XUnitTestCase
     rescue AssertionError => exception
       @reporter.failure test,exception.message
     rescue StandardError => exception
-      puts exception.stacktrace
+      puts exception.message
+      puts exception.backtrace.join("\n")
       @reporter.error test
     rescue Exception => exception
       raise exception
@@ -58,7 +59,7 @@ class XUnitTestCase
 
   def get_test_methods
     method_names = public_methods(true)
-    method_names.delete_if {|method_name| method_name !~ /^test/}
+    method_names.select {|method_name| method_name ~/^test/}
   end
 
   def run_tests
