@@ -1,13 +1,13 @@
 require_relative '../xunit/reporter'
 
-class RUnitFixture
+class XUnitFixture
 
   def initialize
     @klasses=Array.new
     @fixture_reporter = Reporter.new
   end
 
-  def add_class klass
+  def add_class(klass)
     @klasses << klass
   end
 
@@ -17,19 +17,46 @@ class RUnitFixture
 
   def _run_all_tests
     @klasses.each do |klass|
-      k=klass.new @fixture_reporter
-      k.run_tests
+      k=klass.new
+      self.run_tests klass
     end
+  end
+
+  def get_test_methods(klass)
+    method_names = klass.public_instance_methods(true)
+    method_names.select {|method_name| method_name.to_s.start_with?('test_') and klass.new.method(method_name)}
+  end
+
+  def run_tests(klass)
+    self.get_test_methods(klass).each do |test|
+      self.run klass.new,test
+    end
+  end
+
+  def run(instance, test)
+    begin
+      instance.before()
+      @fixture_reporter.test
+      instance.send test
+      @fixture_reporter.success test
+    rescue AssertionError => exception
+      @fixture_reporter.failure test,exception.message
+    rescue StandardError => exception
+      puts exception.message
+      puts exception.backtrace.join("\n")
+      @fixture_reporter.error test
+    rescue Exception => exception
+      #if any other exception apart from a normal exception occurs it should be re-raised
+      raise exception
+    ensure
+      instance.after()
+    end
+
   end
 
 end
 
 class XUnitTestCase
-  attr_accessor :reporter
-
-  def initialize report=Reporter.new
-    @reporter = report
-  end
 
   def before
   end
@@ -37,62 +64,30 @@ class XUnitTestCase
   def after
   end
 
-  def run test
-    begin
-      self.before()
-      @reporter.test
-      self.send test
-      @reporter.success test
-    rescue AssertionError => exception
-      @reporter.failure test,exception.message
-    rescue StandardError => exception
-      puts exception.message
-      puts exception.backtrace.join("\n")
-      @reporter.error test
-    rescue Exception => exception
-      raise exception
-    ensure
-      self.after()
-    end
-
-  end
-
-  def get_test_methods
-    method_names = public_methods(true)
-    method_names.select {|method_name| method_name ~/^test/}
-  end
-
-  def run_tests
-    self.get_test_methods
-    tests.each do |test|
-      self.run test
-    end
-  end
-
-  def assert_true value,message=nil
+  def assert_true(value, message=nil)
     unless value then
       raise AssertionError.new message
     end
     value
   end
 
-  def assert_false value,message=nil
+  def assert_false(value,message=nil)
     self.assert_true message, !value
   end
 
-  def assert_equals_with_message expected, result,message=nil
+  def assert_equals_with_message(expected, result,message=nil)
     self.assert_true expected == result,"#{message}. Expected #{expected} but was #{result}"
   end
 
-  def assert_equals expected, result
+  def assert_equals(expected, result)
     self.assert_equals_with_message expected, result
   end
 
-  def assert_not_equals_with_message expected, result,message=nil
+  def assert_not_equals_with_message(expected, result,message=nil)
     self.assert_true expected != result,"#{message}. Expected #{expected} but was #{result}"
   end
 
-  def assert_not_equals expected, result
+  def assert_not_equals(expected, result)
     self.assert_not_equals_with_message expected, result
   end
 

@@ -1,35 +1,34 @@
-#cambiar la clase Reporter para que tenga una coleccion de resultados y no varios arrays de tests
+require_relative './resultado'
+
 class Reporter
-  attr_accessor :assertions,:errors,:failures,:tests
+  attr_accessor :tests,:results
 
   def initialize
     self.reset
   end
 
   def reset
-    self.assertions=[]
-    self.failures = {}
-    self.errors=[]
-    self.tests=0
+    @results = []
+    @tests=0
   end
 
-  def success test
-     self.assertions << test
+  def success(test)
+     @results << PassedResult.new(test)
   end
 
-  def failure test,message
-     self.failures[test] = message
+  def failure(test, message)
+     @results << FailedResult.new(test,message)
   end
 
-  def error test
-    self.errors << test
+  def error(test)
+    @results << ErrorResult.new(test)
   end
 
   def test
-    self.tests+=1
+    @tests+=1
   end
 
-  def benchmark_and_fire_test instance, method=nil, *args
+  def benchmark_and_fire_test(instance, method=nil, *args)
     beginning_time = Time.now
     if block_given?
       yield
@@ -37,9 +36,25 @@ class Reporter
       instance.send method, args
     end
     end_time = Time.now
-    puts "#{self.tests} tests, #{self.assertions.length} assertions, #{self.failures.length} failures,#{self.errors.length} errors."
+    puts "#{@tests} tests, #{@results.length} assertions,#{self.get_success.length} tests run ok, #{self.get_failures.length} failures,#{self.get_errors.length} errors."
     puts "Finished tests in #{(end_time - beginning_time)*1000} milliseconds"
     self.reset
+  end
+  
+  def filter_results(result_type)
+    @results.select{|result| result.class.equal?result_type}
+  end
+
+  def get_errors
+    self.filter_results ErrorResult
+  end
+
+  def get_success
+    self.filter_results PassedResult
+  end
+
+  def get_failures
+    self.filter_results FailedResult
   end
 
 end

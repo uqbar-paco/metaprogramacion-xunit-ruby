@@ -2,8 +2,7 @@ require_relative '../xunit/xunit'
 require_relative '../xunit/reporter'
 require 'rspec'
 
-class MyRUnitTest < XUnitTestCase
-
+class AllOkTest < XUnitTestCase
   def test_add
     assert_equals(4,2+2)
   end
@@ -11,6 +10,10 @@ class MyRUnitTest < XUnitTestCase
   def test_mult
     assert_equals(2,2*1)
   end
+
+end
+
+class SomeFailTest < XUnitTestCase
 
   def test_equals
     assert_true(2==2)
