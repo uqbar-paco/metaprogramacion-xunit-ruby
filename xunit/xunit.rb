@@ -19,7 +19,6 @@ class XUnitFixture
 
   def _run_all_tests
     @klasses.each do |klass|
-      k=klass.new
       self.run_tests klass
     end
   end

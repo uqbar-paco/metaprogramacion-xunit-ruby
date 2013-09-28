@@ -1,4 +1,4 @@
-require_relative '../xunit/r_unit_test_case'
+require_relative '../xunit/xunit'
 
 class MultiplicationSuccessTest < XUnitTestCase
 
