@@ -19,13 +19,13 @@ end
 
 
 class Result
-include Abstract
+  include Abstract
 
   attr_accessor :test
   abstract_methods :passed
 
   def initialize(test)
-     @test = test
+    @test = test
   end
 
 end

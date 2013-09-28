@@ -2,6 +2,8 @@ require_relative '../xunit/reporter'
 
 class XUnitFixture
 
+  attr_accessor :klasses, :fixture_reporter
+
   def initialize
     @klasses=Array.new
     @fixture_reporter = Reporter.new
@@ -12,7 +14,7 @@ class XUnitFixture
   end
 
   def run_all_tests
-    @fixture_reporter.benchmark_and_fire_test self,:_run_all_tests
+    @fixture_reporter.benchmark_and_fire_test self, :_run_all_tests
   end
 
   def _run_all_tests
@@ -24,12 +26,12 @@ class XUnitFixture
 
   def get_test_methods(klass)
     method_names = klass.public_instance_methods(true)
-    method_names.select {|method_name| method_name.to_s.start_with?('test_') and klass.new.method(method_name)}
+    method_names.select { |method_name| method_name.to_s.start_with?('test_') and klass.new.method(method_name) }
   end
 
   def run_tests(klass)
     self.get_test_methods(klass).each do |test|
-      self.run klass.new,test
+      self.run klass.new, test
     end
   end
 
@@ -40,7 +42,7 @@ class XUnitFixture
       instance.send test
       @fixture_reporter.success test
     rescue AssertionError => exception
-      @fixture_reporter.failure test,exception.message
+      @fixture_reporter.failure test, exception.message
     rescue StandardError => exception
       puts exception.message
       puts exception.backtrace.join("\n")
@@ -71,20 +73,20 @@ class XUnitTestCase
     value
   end
 
-  def assert_false(value,message=nil)
+  def assert_false(value, message=nil)
     self.assert_true message, !value
   end
 
-  def assert_equals_with_message(expected, result,message=nil)
-    self.assert_true expected == result,"#{message}. Expected #{expected} but was #{result}"
+  def assert_equals_with_message(expected, result, message=nil)
+    self.assert_true expected == result, "#{message}. Expected #{expected} but was #{result}"
   end
 
   def assert_equals(expected, result)
     self.assert_equals_with_message expected, result
   end
 
-  def assert_not_equals_with_message(expected, result,message=nil)
-    self.assert_true expected != result,"#{message}. Expected #{expected} but was #{result}"
+  def assert_not_equals_with_message(expected, result, message=nil)
+    self.assert_true expected != result, "#{message}. Expected #{expected} but was #{result}"
   end
 
   def assert_not_equals(expected, result)
@@ -93,9 +95,10 @@ class XUnitTestCase
 
   def assert_block
     message = 'Expected block to return true value'
-    assert_true yield,message
+    assert_true yield, message
   end
 
 end
 
-class AssertionError < StandardError; end
+class AssertionError < StandardError;
+end
