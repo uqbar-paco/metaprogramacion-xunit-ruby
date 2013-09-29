@@ -57,9 +57,9 @@ describe 'Testeando xunit' do
     expect(2).to eq(tester.fixture_reporter.get_success.length)
   end
 
-  it 'testear que el fixture_reporter borre las estadisticas despes' do
+  it 'testear que el fixture_reporter borre las estadisticas despues' do
     tester=XUnitFixture.new
-    tester.add_class(SomeFailTest)
+    tester.add_class(AllOkTest)
     tester.run_all_tests
     expect(0).to eq(tester.fixture_reporter.tests_ran)
   end

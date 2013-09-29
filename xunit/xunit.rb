@@ -42,9 +42,7 @@ class XUnitFixture
     rescue AssertionError => exception
       @fixture_reporter.failure test, exception.message
     rescue StandardError => exception
-      puts exception.message
-      puts exception.backtrace.join("\n")
-      @fixture_reporter.error test
+      @fixture_reporter.error test, exception
     rescue Exception => exception
       #if any other exception apart from a normal exception occurs it should be re-raised
       raise exception
@@ -76,7 +74,7 @@ class XUnitTestCase
   end
 
   def assert_equals_with_message(expected, result, message=nil)
-    self.assert_true expected == result, "#{message}. Expected #{expected} but was #{result}"
+    self.assert_true expected == result, "Expected #{expected} but was #{result}. #{message}"
   end
 
   def assert_equals(expected, result)
@@ -84,7 +82,7 @@ class XUnitTestCase
   end
 
   def assert_not_equals_with_message(expected, result, message=nil)
-    self.assert_true expected != result, "#{message}. Expected #{expected} but was #{result}"
+    self.assert_true expected != result, "Expected #{expected} but was #{result}. #{message}"
   end
 
   def assert_not_equals(expected, result)

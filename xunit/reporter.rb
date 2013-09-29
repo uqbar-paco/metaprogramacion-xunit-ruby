@@ -1,4 +1,5 @@
 require_relative './resultado'
+require 'colorize'
 
 class Reporter
   attr_accessor :results
@@ -20,10 +21,13 @@ class Reporter
   end
 
   def failure(test, message)
+    puts "Failure on test #{test}: #{message}".colorize(:light_yellow)
     @results << FailedResult.new(test, message)
   end
 
-  def error(test)
+  def error(test,exception)
+    puts exception.message.red
+    puts exception.backtrace.join("\n").red
     @results << ErrorResult.new(test)
   end
 
@@ -35,8 +39,12 @@ class Reporter
       instance.send method
     end
     end_time = Time.now
-    puts "#{@results.length} tests,#{self.get_success.length} tests ran ok, #{self.get_failures.length} failures,#{self.get_errors.length} errors."
-    puts "Finished tests in #{(end_time - beginning_time)*1000} milliseconds"
+    color = :green
+    unless self.get_failures.length == 0 and self.get_errors.length == 0
+      color = :red
+    end
+    puts "#{@results.length} tests,#{self.get_success.length} tests ran ok, #{self.get_failures.length} failures,#{self.get_errors.length} errors.".colorize(color)
+    puts "Finished tests in #{(end_time - beginning_time)*1000} milliseconds".colorize(:cyan)
     self.reset
   end
 
