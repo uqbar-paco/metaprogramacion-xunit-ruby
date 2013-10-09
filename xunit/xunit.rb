@@ -52,6 +52,14 @@ class XUnitFixture
 
   end
 
+  def load_classes(file)
+    Dir[file].each { |file_path|
+      require_relative file_path
+      class_name = file_path.gsub(/^[a-z0-9]|_[a-z0-9]/) { |a| a.upcase }.gsub(/_/, "")
+      class_name.constantize.new.run
+    }
+  end
+
 end
 
 class XUnitTestCase

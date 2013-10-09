@@ -28,7 +28,7 @@ class Reporter
   def error(test,exception)
     puts exception.message.red
     puts exception.backtrace.join("\n").red
-    @results << ErrorResult.new(test)
+    @results << ErrorResult.new(jtest)
   end
 
   def benchmark_and_fire_test(instance, method=nil)
